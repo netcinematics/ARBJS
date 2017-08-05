@@ -522,10 +522,36 @@
                 // moon.position.y = 60;
                 moon.material = moonMaterial;
 
-                scene.registerBeforeRender(function(){
-                    moon.position = new BABYLON.Vector3(Math.sin(moonalpha)-10, -30, Math.cos(moonalpha)+10);
-                    moonalpha += 0.01;
-                })
+                // scene.registerBeforeRender(function(){
+                    moon.position = new BABYLON.Vector3(0,-50,0);
+                    // moon.position = new BABYLON.Vector3(Math.sin(moonalpha)-10, -30, Math.cos(moonalpha)+10);
+                    // moonalpha += 0.01;
+                    displayMeshAxis(moon);
+                // })
+            }
+
+            var displayMeshAxis = function (mesh) {
+                mesh.computeWorldMatrix();
+                var matrix = mesh.getWorldMatrix();
+                var origin = mesh.position;
+                // find existing axis for this box and dispose
+                var xAxis = scene.getMeshByName("xAxis"+mesh.name);
+                var yAxis = scene.getMeshByName("yAxis"+mesh.name);
+                var zAxis = scene.getMeshByName("zAxis"+mesh.name);
+                if (xAxis!=null){ xAxis.dispose();}
+                if (yAxis!=null){ yAxis.dispose();}
+                if (zAxis!=null){ zAxis.dispose();}
+                // calculate new normals for this mesh in world coordinate system
+                var xNormal=BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(100,0,0),matrix);
+                var yNormal=BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(0,100,0),matrix);
+                var zNormal=BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(0,0,100),matrix);
+                // create axis lines
+                xAxis = BABYLON.Mesh.CreateDashedLines("xAxis"+mesh.name, [origin, xNormal],3,10,200, scene, false);
+                xAxis.color = BABYLON.Color3.Red();
+                yAxis = BABYLON.Mesh.CreateDashedLines("yAxis"+mesh.name, [origin, yNormal],3,10,200, scene, false);
+                yAxis.color = BABYLON.Color3.Green();
+                zAxis = BABYLON.Mesh.CreateDashedLines("zAxis"+mesh.name, [origin, zNormal],3,10,200, scene, false);
+                zAxis.color = BABYLON.Color3.Blue();
             }
 
             /****************************CREATE-SYMPHONY*******************************/
